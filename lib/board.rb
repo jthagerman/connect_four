@@ -1,18 +1,27 @@
+#/lib/board
+require 'json'
 class Board
+    def initialize(board = nil)
+        if board == nil
+            @board =  Array.new(6) { Array.new(7) }
+        else
+            @board = board
+        end
+    end
 
-    def initialize()
-        @board =  Array.new(6) { Array.new(7) }
+    def to_json
+        JSON.dump ({
+          :board => @board
+        })
+    end
+
+    def self.from_json(string)
+        data = JSON.load string
+        self.new(data['board'])
     end
 
     def getBoard()
         return @board
-    end
-
-    def checkPosition(row,col)
-        (@board[row-1][col-1] == nil)?  true :  false  
-    end
-    def getPosition(row,col)
-        return @board[row][col]
     end
 
     def check_for_full_board()
@@ -40,7 +49,6 @@ class Board
             if ((row[0..3] == win_array) ||
                   (row[1..4] == win_array) ||
                   (row[2..5] == win_array))
-                   puts "verticsl win"
                     return true
              end
         end
@@ -50,7 +58,6 @@ class Board
                  (row[1..4] == win_array) ||
                  (row[2..5] == win_array) ||
                  (row[3..6] == win_array))
-                puts "horiz win"
                  return true
             end
         end
@@ -59,7 +66,6 @@ class Board
             row.each_with_index do |col,col_index|
                 if @board[row_index][col_index] == player && @board[row_index-1][col_index+1] == player &&
                      @board[row_index-2][col_index+2] == player && @board[row_index-3][col_index+3] == player
-                     puts "diagona top to bottom win"
                     return true
                 end
             end
@@ -68,7 +74,6 @@ class Board
             row.each_with_index do |col,col_index|
                 if @board[row_index][col_index] == player && @board[row_index-1][col_index-1] == player &&
                      @board[row_index-2][col_index-2] == player && @board[row_index-3][col_index-3] == player
-                     puts "diaginal bottom to top win"
                     return true
                 end
             end
@@ -102,18 +107,6 @@ class Board
         return false
     end
 
-    def checkValidPosition(row,col)
-        begin
-            if((row <1)||(row>6) ||(col < 1)||(col>7))
-                raise OffBoard.new "Invalid Pos"
-            end
-        rescue OffBoard => e
-            puts "Error! This is off the board"
-            return false
-        end
-        return true
-    end
-
     def to_s
         board_string = "______________________\n"
         @board.each_with_index do |column, index|
@@ -133,11 +126,3 @@ class Board
         return board_string
     end
 end
-
-class OffBoard < StandardError
-    def initialize(msg="Pos is off the board", exception_type="custom")
-        @exception_type = exception_type
-        super(msg)
-    end
-end
-
