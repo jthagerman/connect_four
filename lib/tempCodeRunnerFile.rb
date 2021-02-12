@@ -1,0 +1,1 @@
+    puts  @board[index][column] 

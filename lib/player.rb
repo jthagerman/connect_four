@@ -1,10 +1,12 @@
 class Player
+    attr_accessor :name, :symbol
+
     def initialize(name,symbol)
         @name = name
         @symbol = symbol
     end
 
     def to_s
-        return "Player name is #{@name} and their symbol is #{symbol}"
+        return @symbol
     end
 end
